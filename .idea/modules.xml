@@ -4,7 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MLP/MLP.iml" filepath="$PROJECT_DIR$/MLP/MLP.iml" />
       <module fileurl="file://$PROJECT_DIR$/SAE_IA_2023.iml" filepath="$PROJECT_DIR$/SAE_IA_2023.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TreeSearch/TreeSearch.iml" filepath="$PROJECT_DIR$/TreeSearch/TreeSearch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/connect-four/connect-four.iml" filepath="$PROJECT_DIR$/connect-four/connect-four.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rush-hour/rush-hour.iml" filepath="$PROJECT_DIR$/rush-hour/rush-hour.iml" />
     </modules>
   </component>
 </project>
