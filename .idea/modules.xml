@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MLP/MLP.iml" filepath="$PROJECT_DIR$/MLP/MLP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SAE_IA_2023.iml" filepath="$PROJECT_DIR$/SAE_IA_2023.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeSearch/TreeSearch.iml" filepath="$PROJECT_DIR$/TreeSearch/TreeSearch.iml" />
+    </modules>
+  </component>
+</project>
