@@ -102,9 +102,4 @@ public class ConnectFour extends Game {
         return null; // faire plaisir a javac
     }
 
-    
-
-    
-
-    
 }

@@ -18,10 +18,7 @@ import java.util.Random;
 
 public class AlphaBetaPlayer extends Player {
 
-    public int nbEtats = 0;
     private int MAX_DEPTH;
-    private String graphviz = "";
-    private int showDepth = 2;
 
     /**
      * Crée un joueur AlphaBeta
@@ -37,54 +34,40 @@ public class AlphaBetaPlayer extends Player {
 
     /**
      * {@inheritDoc}
-     * <p>Retourn un coup minmax</p>
+     * <p>Retourne un coup minmax</p>
      */
     public Action getMove(GameState state) {
 
-        nbEtats = 0;
-        ActionValuePair av;
 
+        ActionValuePair actionValue;
+        // Profondeur maximum de 6
         MAX_DEPTH = 6;
 
+        // Tant que l'action n' apas été choisi, on continue à trouver le meilleur coup
+
+        // Remarque: Il faut diminuer la profondeur à chaque itération, car si l'arbre de décision
+        // voit la même issue (gagnant pour un joueur peu importe l'action) alors, il ne peut pas
+        // trouver l'action. Mais en diminuant la profondeur, on limite sa vision et ainsi il peut
+        // décider de jouer un coup.
         do {
-            NameUtils.reset();
-            graphviz = "digraph MiniMaxTree {\n" +
-                    "  node [shape=ellipse];\n";
-            graphviz += "root [label=\"root\"];\n";
 
-            System.out.println("player=" + state.getPlayerToMove());
             if (state.getPlayerToMove() == 'X') {
-                av = getMaxValue(state, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, "root");
+                actionValue = getMaxValue(state, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
             } else {
-                av = getMinValue(state, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, "root");
+                actionValue = getMinValue(state, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
             }
-            System.out.println("max depth: " + MAX_DEPTH);
+
             MAX_DEPTH--;
-            if (MAX_DEPTH < 0) {
-                String t = state.getPlayerToMove() == 'X' ? "Joueur 1" : "Joueur 2";
-                System.err.println(t + " : Bien joué, tu as gagné, j'ai calculé toutes les possibilités, j'ai perdu.");
-                break;
-            }
-        } while (av.getAction() == null);
 
-        System.out.println("Nombre d'états calculés: " + nbEtats);
-        graphviz += "}";
+        } while (actionValue.getAction() == null);
 
-        Action action = av.getAction();
-        System.out.println("Valeur action: " + av.getValue());
-
-        try (FileWriter fileWriter = new FileWriter("input.dot")) {
-            fileWriter.write(graphviz);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return action;
+        return actionValue.getAction();
     }
 
-    public ActionValuePair getMaxValue(GameState state, double alpha, double beta, int depth, String nodeName) {
-
-        nbEtats++;
+    /**
+     * Selectionne le meilleur coup maximale
+     */
+    public ActionValuePair getMaxValue(GameState state, double alpha, double beta, int depth) {
 
         if (game.endOfGame(state)) {
             return new ActionValuePair(null, state.getGameValue());
@@ -101,29 +84,16 @@ public class AlphaBetaPlayer extends Player {
 
         for (Action action : game.getActions(state)) {
 
-            String nextNodeName = NameUtils.next();
-
             GameState nextState = (GameState) game.doAction(state, action);
-            ActionValuePair minVal = getMinValue(nextState, alpha, beta, depth, nextNodeName);
-
-            if (ArgParse.DEBUG && depth <= showDepth) {
-                graphviz += nextNodeName + " [label=\"" + action.getName() + " (MAX;" + minVal.getValue() + ")\"";
-            }
+            ActionValuePair minVal = getMinValue(nextState, alpha, beta, depth);
 
             if (minVal.getValue() > vMax) {
                 vMax = minVal.getValue();
                 cMax = action;
-                if (ArgParse.DEBUG && depth <= showDepth) {
-                    graphviz += " color=green";
-                }
             }
 
             if (vMax > alpha) {
                 alpha = vMax;
-            }
-
-            if (ArgParse.DEBUG && depth <= showDepth) {
-                graphviz += "];\n" + nodeName + " -> " + nextNodeName + ";\n";
             }
 
             if (vMax >= beta) {
@@ -136,9 +106,10 @@ public class AlphaBetaPlayer extends Player {
 
     }
 
-    public ActionValuePair getMinValue(GameState state, double alpha, double beta, int depth, String nodeName) {
-
-        nbEtats++;
+    /**
+     * Selectionne le meilleur coup minimale
+     */
+    public ActionValuePair getMinValue(GameState state, double alpha, double beta, int depth) {
 
         if (game.endOfGame(state)) {
             return new ActionValuePair(null, state.getGameValue());
@@ -155,29 +126,16 @@ public class AlphaBetaPlayer extends Player {
 
         for (Action action : game.getActions(state)) {
 
-            String nextNodeName = NameUtils.next();
-
             GameState nextState = (GameState) game.doAction(state, action);
-            ActionValuePair maxVal = getMaxValue(nextState, alpha, beta, depth, nextNodeName);
-
-            if (ArgParse.DEBUG && depth <= showDepth) {
-                graphviz += nextNodeName + " [label=\"" + action.getName() + " (MIN;" + maxVal.getValue() + ")\"";
-            }
+            ActionValuePair maxVal = getMaxValue(nextState, alpha, beta, depth);
 
             if (maxVal.getValue() < vMin) {
                 vMin = maxVal.getValue();
                 cMin = action;
-                if (ArgParse.DEBUG && depth <= showDepth) {
-                    graphviz += " color=red";
-                }
             }
 
             if (vMin < beta) {
                 beta = vMin;
-            }
-
-            if (ArgParse.DEBUG && depth <= showDepth) {
-                graphviz += "];\n" + nodeName + " -> " + nextNodeName + ";\n";
             }
 
             if (vMin <= alpha) {

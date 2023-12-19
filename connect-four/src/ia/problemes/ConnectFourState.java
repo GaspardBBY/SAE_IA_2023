@@ -32,16 +32,7 @@ public class ConnectFourState extends GameState {
         for(int i=0; i<r; i++)
             Arrays.fill(board[i], EMPTY);
 
-        /*board = new int[][]{
-                {EMPTY, O, O, X, EMPTY, O, X},
-                {EMPTY, O, O, X, EMPTY, X, O},
-                {EMPTY, EMPTY, O, O, EMPTY, EMPTY, X},
-                {EMPTY, EMPTY, X, X, EMPTY, EMPTY, X},
-                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-        };*/
-
-        // -1: pas fini,1: X gagne, 0: O Gagne, 0.5 match nul
+        // -1: pas fini,+inf: X gagne, -inf: O Gagne, 0.5 match nul
         game_value = -1;
         player_to_move = X; // convention X comence
 
@@ -343,11 +334,21 @@ public class ConnectFourState extends GameState {
         return false;
     }
 
+    /**
+     * Ajout du'ne fonction heuristique pour évaluer la partie
+     * Si la valeur tend vers +inf, alors X gagne, sinon O gagne
+     * @return [-inf ; +inf]
+     */
     @Override
     public double getHeuristic() {
         return evaluation(X) - evaluation(O);
     }
 
+    /**
+     * Permet d'évaluer le jeu en fonction du joueur demandé
+     * @param exceptedPlayer (X ou O)
+     * @return Le score d'évaluation (entre 0 et +inf)
+     */
     public double evaluation(int exceptedPlayer) {
         double score = 0;
 
@@ -369,6 +370,9 @@ public class ConnectFourState extends GameState {
         return score;
     }
 
+    /**
+     * Permet de tester chaque case du jeu et de tester les alignements
+     */
     private double evaluateDirection(int dirRow, int dirCol, int exceptedPlayer) {
 
         double score = 0;
@@ -382,6 +386,14 @@ public class ConnectFourState extends GameState {
         return score;
     }
 
+    /**
+     * Permet d'évaluer une ligne en fonction de sa direction (vertical/horizontal/diagonal)
+     * et d'attribuer un score pour chaque alignement de la même couleur
+     * 4 pions alignés : +inf (partie terminée)
+     * 3 pions alignés : 1000 points
+     * 2 pions alignés : 10 points
+     * 1 pion posé : 1 point
+     */
     private double evaluateLine(int[][] board, int row, int col, int dirRow, int dirCol, int exceptedPlayer) {
         double score = 0;
         int count = 0;
