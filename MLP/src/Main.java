@@ -69,7 +69,7 @@ public class Main {
         List<Imagette> imagesEntrainements = Arrays.asList(donneesEntrainement.getImagettesArray());
         List<Imagette> imagesDeTests = Arrays.asList(donneesTest.getImagettesArray());
 
-        runMPL(couches, initalLeanringRate, finalLearningRate, schuffle, imagesEntrainements, imagesDeTests, tauxSortie, maxIteration, learned, mlp);
+        runMPL(couches, initalLeanringRate, finalLearningRate, schuffle, imagesEntrainements, imagesDeTests, tauxSortie, maxIteration, mlp);
     }
 
     /**
