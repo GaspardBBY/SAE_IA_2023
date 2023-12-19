@@ -33,40 +33,28 @@ public class LancerJeux {
         String p1_type = ArgParse.getPlayer1FromCmd(args);
         String p2_type = ArgParse.getPlayer2FromCmd(args);
 
-        int winnerAlpha = 0;
-        int parties = 1;
+        // créer un jeux, des joueurs et le moteur de jeux
+        Game game = ArgParse.makeGame(game_name);
+        Player p1 = ArgParse.makePlayer(p1_type, game, true);
+        Player p2 = ArgParse.makePlayer(p2_type, game, false);
+        GameEngine game_engine = new GameEngine(game, p1, p2);
 
-        for (int i = 0; i < parties; i++) {
+        // on joue jusqu'à la fin
+        long startTime = System.currentTimeMillis();
+        GameState end_game = game_engine.gameLoop();
+        long estimatedTime = System.currentTimeMillis() - startTime;
 
-            // créer un jeux, des joueurs et le moteur de jeux
-            Game game = ArgParse.makeGame(game_name);
-            Player p1 = ArgParse.makePlayer(p1_type, game, true);
-            Player p2 = ArgParse.makePlayer(p2_type, game, false);
-            GameEngine game_engine = new GameEngine(game, p1, p2);
-
-            // on joue jusqu'à la fin
-            long startTime = System.currentTimeMillis();
-            GameState end_game = game_engine.gameLoop();
-            long estimatedTime = System.currentTimeMillis() - startTime;
-
-            // Partie fini
-            System.out.println(end_game);
-            Player winner = game_engine.getWinner(end_game);
-            if (winner != null) {
-                System.out.print("Le joueur "
-                        + (game_engine.getEndGameValue(end_game) > 1 ? 1 : 2)
-                        + " (" + winner.getName() + ") a gagné, après "
-                        + game_engine.getTotalMoves()
-                        + " coups. ");
-                if (winner.getName().equalsIgnoreCase("AlphaBeta")) {
-                    winnerAlpha++;
-                }
-            } else
-                System.out.print("Match nul. ");
-            System.out.println("La partie à durée " + estimatedTime / 1000. + " sec.");
-        }
-
-        System.out.println("L'IA AlphaBeta a gagné " + winnerAlpha + " sur " + parties + " parties");
-
+        // Partie fini
+        System.out.println(end_game);
+        Player winner = game_engine.getWinner(end_game);
+        if (winner != null) {
+            System.out.print("Le joueur "
+                    + (game_engine.getEndGameValue(end_game) > 1 ? 1 : 2)
+                    + " (" + winner.getName() + ") a gagné, après "
+                    + game_engine.getTotalMoves()
+                    + " coups. ");
+        } else
+            System.out.print("Match nul. ");
+        System.out.println("La partie à durée " + estimatedTime / 1000. + " sec.");
     }
 }

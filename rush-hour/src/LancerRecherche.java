@@ -18,7 +18,7 @@ public class LancerRecherche {
             ("Utilisation :\n\n"
              + "java LancerRecherche [-prob problem] [-algo algoname]"
              + "[-v] [-h]\n"
-             + "-prob : Le nom du problem {rush}. Par défaut rush\n"
+             + "-prob : Le nom du problem {rush-beginner, rush-intermediate, rush-advanced, rush-expert}. Par défaut rush-beginner\n"
              + "-algo : L'agorithme {rnd, bfs, dfs, ucs, gfs, astar}. Par défault rnd\n"
              + "-v    : Rendre bavard (mettre à la fin)\n"
              + "-h    : afficher ceci (mettre à la fin)"
@@ -37,5 +37,6 @@ public class LancerRecherche {
         // resoudre 
         if( algo.solve() )
             algo.printSolution();
+
     }
 }
