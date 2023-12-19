@@ -5,18 +5,77 @@ import ia.framework.common.Misc;
 import ia.framework.common.State;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class RushHourState extends State {
 
+    // Taille du plateau (6x6)
     private static final int GAME_SIZE = 6;
     private static final int EMPTY = ' ';
+
+    public static final Vehicle[] BEGINNER_PUZZLE = new Vehicle[]{
+            new Vehicle(0, 2, 3, Direction.VERTICAL, 'Y'),
+            new Vehicle(0, 4, 2, Direction.HORIZONTAL, 'G'),
+            new Vehicle(2, 0, 2, Direction.HORIZONTAL, 'R'),
+            new Vehicle(3, 0, 3, Direction.HORIZONTAL, 'P'),
+            new Vehicle(3, 5, 3, Direction.VERTICAL, 'B'),
+    };
+
+    public static final Vehicle[] INTERMEDIATE_PUZZLE = new Vehicle[]{
+            new Vehicle(0, 0, 3, Direction.HORIZONTAL, 'Y'),
+            new Vehicle(0, 3, 2, Direction.VERTICAL, 'L'),
+            new Vehicle(0, 5, 2, Direction.VERTICAL, 'O'),
+            new Vehicle(1, 2, 3, Direction.VERTICAL, 'V'),
+            new Vehicle(2, 0, 2, Direction.HORIZONTAL, 'R'),
+            new Vehicle(2, 5, 2, Direction.VERTICAL, 'A'),
+            new Vehicle(3, 3, 2, Direction.HORIZONTAL, 'P'),
+            new Vehicle(4, 0, 3, Direction.HORIZONTAL, 'B'),
+            new Vehicle(4, 4, 2, Direction.VERTICAL, 'D'),
+            new Vehicle(5, 1, 2, Direction.HORIZONTAL, 'G'),
+    };
+    public static final Vehicle[] ADVANCED_PUZZLE = new Vehicle[]{
+            new Vehicle(0, 0, 2, Direction.HORIZONTAL, 'L'),
+            new Vehicle(0, 2, 2, Direction.VERTICAL, 'O'),
+            new Vehicle(0, 3, 3, Direction.VERTICAL, 'Y'),
+            new Vehicle(1, 0, 3, Direction.VERTICAL, 'V'),
+            new Vehicle(2, 1, 2, Direction.HORIZONTAL, 'R'),
+            new Vehicle(3, 3, 3, Direction.HORIZONTAL, 'B'),
+            new Vehicle(4, 0, 3, Direction.HORIZONTAL, 'G'),
+            new Vehicle(4, 4, 2, Direction.VERTICAL, 'A'),
+            new Vehicle(4, 5, 2, Direction.VERTICAL, 'P'),
+            new Vehicle(5, 0, 2, Direction.HORIZONTAL, 'D'),
+    };
+    public static final Vehicle[] EXPERT_PUZZLE = new Vehicle[]{
+            new Vehicle(0, 0, 2, Direction.VERTICAL, 'L'),
+            new Vehicle(0, 1, 2, Direction.VERTICAL, 'O'),
+            new Vehicle(0, 2, 2, Direction.HORIZONTAL, 'A'),
+            new Vehicle(0, 4, 2, Direction.VERTICAL, 'P'),
+            new Vehicle(0, 5, 2, Direction.VERTICAL, 'D'),
+            new Vehicle(2, 0, 3, Direction.VERTICAL, 'Y'),
+            new Vehicle(2, 1, 2, Direction.HORIZONTAL, 'R'),
+            new Vehicle(2, 3, 2, Direction.VERTICAL, 'G'),
+            new Vehicle(2, 5, 2, Direction.VERTICAL, 'W'),
+            new Vehicle(3, 1, 2, Direction.HORIZONTAL, 'N'),
+            new Vehicle(4, 2, 2, Direction.VERTICAL, 'J'),
+            new Vehicle(4, 3, 3, Direction.HORIZONTAL, 'V'),
+            new Vehicle(5, 0, 2, Direction.HORIZONTAL, 'M'),
+            new Vehicle(5, 3, 3, Direction.HORIZONTAL, 'Q'),
+    };
+
+
     private Vehicle[] board;
 
+    /**
+     * Constructeur par défaut (problème: BEGINNER)
+     */
     public RushHourState() {
-        this.board = generateBoard();
+        this.board = BEGINNER_PUZZLE;
     }
 
+    /**
+     * Constructeur avec un tableau à passer
+     *
+     * @param board Un tableau de vehicule
+     */
     public RushHourState(Vehicle[] board) {
         this.board = board.clone();
     }
@@ -25,6 +84,11 @@ public class RushHourState extends State {
         return board;
     }
 
+    /**
+     * Copier l'état du jeu (en s'assurant qu'il n'y a pas d'effet de bord)
+     *
+     * @return State
+     */
     @Override
     protected State cloneState() {
         Vehicle[] boardClone = new Vehicle[board.length];
@@ -34,24 +98,46 @@ public class RushHourState extends State {
         return new RushHourState(boardClone);
     }
 
+    /**
+     * Vérifier si cet état est égal à un autre état (en regardant le tableau des vehicules)
+     *
+     * @param o Un autre état
+     */
     @Override
     protected boolean equalsState(State o) {
-        return Arrays.equals(board, ((RushHourState) o).getBoard());
+        RushHourState state = (RushHourState) o;
+        return Arrays.equals(board, state.getBoard());
     }
 
+    @Override
+    protected int hashState() {
+        return Arrays.hashCode(board);
+    }
+
+    /**
+     * Vérifier si un coup est légal pour une voiture et une action donnée
+     *
+     * @param v Un véhicule
+     * @param a Une action
+     * @return true ou false
+     */
     public boolean isLegal(Vehicle v, Action a) {
 
-        int[][] game = toIntArray();
-        int x = v.x;
-        int y = v.y;
+        int[][] game = toGameArray();
+        // Ces coordonnées correspondant à la position de la voiture
+        // et evolueront par la direction qu'elles prennent
+        // et l'action sera légal si ces coordonnées tombent sur une case vide
+        int x = v.getX();
+        int y = v.getY();
 
         // Si la voiture est horizontal, on avance que a gauche ou à droite
-        if (v.direction == Direction.HORIZONTAL) {
+        if (v.getDirection() == Direction.HORIZONTAL) {
             if (a == RushHour.LEFT) {
                 y = y - 1;
             } else if (a == RushHour.RIGHT) {
-                y = y + v.taille;
+                y = y + v.getTaille();
             } else {
+                // action non légale
                 return false;
             }
             // Si la voiture est vertical, on avance en haut et en bas
@@ -60,39 +146,52 @@ public class RushHourState extends State {
             if (a == RushHour.UP) {
                 x = x - 1;
             } else if (a == RushHour.DOWN) {
-                x = x + v.taille;
+                x = x + v.getTaille();
             } else {
+                // action non légale
                 return false;
             }
         }
 
+        // verification que les coordonnées sont toujours dans le plateau de jeu
         if (x < 0 || y < 0 || x >= GAME_SIZE || y >= GAME_SIZE) {
             return false;
         }
 
+        // si les coordonnées correspondent à une case vide, alors l'action est légal
+        // l'action ne gène aucun autre vehicule (pas de collision)
         return game[x][y] == EMPTY;
 
     }
 
-    @Override
-    protected int hashState() {
-        return Arrays.hashCode(board);
-    }
 
-    public int[][] toIntArray() {
+    /**
+     * Méthode qui permet de transformer le tableau de véhicule
+     * en un tableau à deux dimensions correspondant au plateau du jeu
+     * avec le positionnement de chaque vehicule sur les cases du plateau
+     *
+     * @return int[][]
+     */
+    public int[][] toGameArray() {
+        // on crée un plateau
         int[][] game = new int[GAME_SIZE][GAME_SIZE];
 
-        for (int i = 0; i < GAME_SIZE; i++)
+        // on le remplit de case vide
+        for (int i = 0; i < GAME_SIZE; i++) {
             Arrays.fill(game[i], EMPTY);
+        }
 
+        // On veut placer le vehicule sur le plateau
         for (Vehicle vehicle : board) {
 
-            for (int i = 0; i < vehicle.taille; i++) {
-                if (vehicle.direction == Direction.HORIZONTAL) {
-                    game[vehicle.x][vehicle.y + i] = vehicle.color;
+            for (int i = 0; i < vehicle.getTaille(); i++) {
+
+                if (vehicle.getDirection() == Direction.HORIZONTAL) {
+                    game[vehicle.getX()][vehicle.getY() + i] = vehicle.getColor();
                 } else {
-                    game[vehicle.x + i][vehicle.y] = vehicle.color;
+                    game[vehicle.getX() + i][vehicle.getY()] = vehicle.getColor();
                 }
+
             }
 
         }
@@ -100,9 +199,12 @@ public class RushHourState extends State {
         return game;
     }
 
+    /**
+     * Permet d'afficher une visualisation de ce jeu
+     */
     public String toString() {
 
-        int[][] game = toIntArray();
+        int[][] game = toGameArray();
 
         String res = "";
         res += Misc.dupString("+---", GAME_SIZE);
@@ -127,7 +229,7 @@ public class RushHourState extends State {
 
     public Vehicle getVehicleByColor(String color) {
         char c = color.charAt(0);
-        for (RushHourState.Vehicle v : board) {
+        for (Vehicle v : board) {
             if (v.getColor() == c) {
                 return v;
             }
@@ -135,13 +237,12 @@ public class RushHourState extends State {
         return null;
     }
 
+    /**
+     * Methode heuristique
+     */
     public double getHeuristic() {
         return manathanDistance();
     }
-
-    //
-    // API privée, manipulation du jeux
-    //
 
     // Calcule la distance entre le puzzle et la solution
     // https://en.wikipedia.org/wiki/Taxicab_geometry
@@ -150,105 +251,6 @@ public class RushHourState extends State {
         Vehicle locCurr = getVehicleByColor("R");
         result += Math.abs(5 - locCurr.getX());
         return result;
-    }
-
-    public Vehicle[] generateBoard() {
-
-        return new Vehicle[]{
-                new Vehicle(0, 2, 3, Direction.VERTICAL, 'Y'),
-                new Vehicle(0, 4, 2, Direction.HORIZONTAL, 'G'),
-                new Vehicle(2, 0, 2, Direction.HORIZONTAL, 'R'),
-                new Vehicle(3, 0, 3, Direction.HORIZONTAL, 'P'),
-                new Vehicle(3, 5, 3, Direction.VERTICAL, 'B'),
-        };
-
-    }
-
-    public Vehicle[] hard() {
-
-        return new Vehicle[]{
-                new Vehicle(0, 0, 2, Direction.VERTICAL, 'L'),
-                new Vehicle(0, 1, 2, Direction.VERTICAL, 'O'),
-                new Vehicle(0, 2, 2, Direction.HORIZONTAL, 'A'),
-                new Vehicle(0, 4, 2, Direction.VERTICAL, 'P'),
-                new Vehicle(0, 5, 2, Direction.VERTICAL, 'D'),
-                new Vehicle(2, 0, 3, Direction.VERTICAL, 'Y'),
-                new Vehicle(2, 1, 2, Direction.HORIZONTAL, 'R'),
-                new Vehicle(2, 3, 2, Direction.VERTICAL, 'G'),
-                new Vehicle(2, 5, 2, Direction.VERTICAL, 'W'),
-                new Vehicle(3, 1, 2, Direction.HORIZONTAL, 'N'),
-                new Vehicle(4, 2, 2, Direction.VERTICAL, 'J'),
-                new Vehicle(4, 3, 3, Direction.HORIZONTAL, 'V'),
-                new Vehicle(5, 0, 2, Direction.HORIZONTAL, 'M'),
-                new Vehicle(5, 3, 3, Direction.HORIZONTAL, 'Q'),
-        };
-
-    }
-
-    public class Vehicle {
-        private int x;
-        private int y;
-        private int taille;
-        private Direction direction;
-        private char color;
-
-        public Vehicle(int x, int y, int taille, Direction direction, char color) {
-            this.x = x;
-            this.y = y;
-            this.taille = taille;
-            this.direction = direction;
-            this.color = color;
-        }
-
-        public void moveLeft() {
-            y -= 1;
-        }
-
-        public void moveRight() {
-            y += 1;
-        }
-
-        public void moveUp() {
-            x -= 1;
-        }
-
-        public void moveDown() {
-            x += 1;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public char getColor() {
-            return color;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Vehicle vehicle = (Vehicle) o;
-            return x == vehicle.x && y == vehicle.y && taille == vehicle.taille && color == vehicle.color && direction == vehicle.direction;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y, taille, direction, color);
-        }
-
-        public Vehicle cloneVehicle() {
-            return new Vehicle(x, y, taille, direction, color);
-        }
-    }
-
-    public enum Direction {
-        VERTICAL,
-        HORIZONTAL
     }
 
 }

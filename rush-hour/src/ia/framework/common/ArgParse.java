@@ -150,18 +150,7 @@ public class ArgParse {
      */
 
     public static SearchProblem makeProblem(String prob) {
-        if (prob == null)
-            prob = "rush";
-        switch (prob) {
-            case "rush":
-                return new RushHour();
-            default:
-                System.out.println("Problème inconnu");
-                usage();
-                System.exit(1);
-        }
-
-        return null; // inatteignable, faire plaisir a javac
+        return new RushHour();
     }
 
 
@@ -208,10 +197,16 @@ public class ArgParse {
      */
     public static State makeInitialState(String prob) {
         if (prob == null)
-            prob = "rush";
+            prob = "rush-beginner";
         switch (prob) {
-            case "rush":
-                return new RushHourState();
+            case "rush-beginner":
+                return new RushHourState(RushHourState.BEGINNER_PUZZLE);
+            case "rush-intermediate":
+                return new RushHourState(RushHourState.INTERMEDIATE_PUZZLE);
+            case "rush-advanced":
+                return new RushHourState(RushHourState.ADVANCED_PUZZLE);
+            case "rush-expert":
+                return new RushHourState(RushHourState.EXPERT_PUZZLE);
         }
         return null;
     }
