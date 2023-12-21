@@ -20,10 +20,10 @@ Pour une utilisation discrète, KNN est donc favorisée, là ou MLP reste de loi
 
 * ### Défis
 
-  La deuxième phase de la SAE porte sur le choix de 2 défis parmis les 5 suivants : 
-  * Recherche D'itinéraire GPS
+  La deuxième phase de la SAE porte sur le choix de 2 défis parmis les 3 suivants : 
+  * Recherche d'itinéraire GPS
   * Modélisation du problème RushHour
-  * Application de l'algoritmhe Alpha-Beta sur le puissance 4
+  * Application de l'algorithme Alpha-Beta sur le puissance 4
 
   #### Défi 2: Modélisation du problème RushHour
   
