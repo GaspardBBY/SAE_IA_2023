@@ -43,5 +43,6 @@ Pour une utilisation discrète, KNN est donc favorisée, là ou MLP reste de loi
   
   Cet algorithme reprend chaque principe définit précédemment en y ajoutant l'idée que si un coup stupide est trouvé alors on ne le développe pas. Bien évidemment, un programme est incapable de comprendre l'idée de stupidité. C'est pourquoi un coup évalué comme tel correspond à l'action qui diminue le score de la partie alors que le but du joueur qui l'effectue est d'augmenter ce score. Cette méthode permet alors de diviser jusqu'à deux fois le nombre d'états calculé et rend ainsi le jeu plus rapide et efficace.
 
+Légende : X = Humain ; O = Algorithme
 
   ![Puissance 4 : exemple](ressources/animation.gif)
