@@ -12,10 +12,10 @@ Alors que les deux premières ne nécessitent qu'un seul perceptron, le XOR quan
 
 Une fois la phase d'approche terminée, nous avons complexifié la tâche en modifiant le MLP afin qu'il accepte des entrées autres que binaires, comme par exemple les images de MNIST.
 Pour ce faire, le nombre d'entrées correspond au nombre de pixels présent dans chaque image. A la sortie, nous avons 10 possibilités correspondant chacune à un chiffre compris entre 0 et 9 inclus.
-Avec ces changements, on peut remarquer que des couches cachées allant de 15 à 10 neurones deviennent insuffisantes. Le choix de ce nombre étant arbitraire, nous avons choisis de prendre 2 couches cachées avec respectivement 150 et 100 neurones.
-Obtenant maintenant des resultats concluants, nous avons pus confronté notre algorithme de classification par réseau de neurones (MLP) à l'algorithme de classification par les plus proches voisins (KNN).
+Avec ces changements, on peut remarquer que des couches cachées allant de 15 à 10 neurones deviennent insuffisantes. Le choix de ce nombre étant arbitraire, nous avons choisi de prendre 2 couches cachées avec respectivement 150 et 100 neurones.
+Obtenant maintenant des resultats concluants, nous avons pu confronter notre algorithme de classification par réseau de neurones (MLP) à l'algorithme de classification par les plus proches voisins (KNN).
 
- La conslusion est des plus mitigées puissent MLP se trouve être plus long à entrainer mais plus précis dans ses réponses, c'est à dire une marge d'erreur plus faible : 2% d'erreurs. KNN, quand à lui, ne nécessite pas d'entrainement puisqu'il intérroge sa banque de données à chaque nouvelle requête. Néanmoins, il est moins précis (3% d'erreurs) et se trouve dépacé par la réponse presque instantanée d'un MLP entrainé alors que lui, continue à parcourir la totalité de ses données avant de répondre.
+ La conclusion est des plus mitigées puisque MLP se trouve être plus long à entrainer mais plus précis dans ses réponses, c'est à dire une marge d'erreur plus faible : 2% d'erreurs. KNN, quand à lui, ne nécessite pas d'entrainement puisqu'il interroge sa banque de données à chaque nouvelle requête. Néanmoins, il est moins précis (3% d'erreurs) et se trouve dépassé par la réponse presque instantanée d'un MLP entrainé alors que lui, continue à parcourir la totalité de ses données avant de répondre.
 Pour une utilisation discrète, KNN est donc favorisée, là ou MLP reste de loin le plus efficace sur une utilisation récurrente et complexe.
 
 * ### Défis
